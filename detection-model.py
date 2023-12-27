@@ -32,6 +32,12 @@ comments_dataframe.columns = ["COMMENT_ID", "COMMENT", "SPAM_CLASSIFICATION"]
 #adds length column to dataframe
 comments_dataframe["LENGTH"] = comments_dataframe["COMMENT"].apply(len)
 
+#creates pie chart showing the amounnt of spam comments in the dataset
+spam_classification_series = comments_dataframe.groupby("SPAM_CLASSIFICATION")["SPAM_CLASSIFICATION"].count()
+fig, ax = plt.subplots()
+ax.pie(spam_classification_series, labels=["Not Spam", "Spam"], autopct='%1.1f%%')
+plt.show()
+
 #splits dataset into training and testing set 70/30
 comments_train_split, comments_test_split, spam_classification_train, spam_classification_test = train_test_split(comments_dataframe["COMMENT"], comments_dataframe["SPAM_CLASSIFICATION"], test_size=0.3, random_state=42)
 
@@ -41,7 +47,6 @@ def preprocess_comments(comment):
     http_urlhyperlink_regex = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
 
     comment = re.sub(http_urlhyperlink_regex, 'urlsubstitute', comment)
-    print(comment)
 
     #regular expression attributed to https://uibakery.io/regex-library/html-regex-python
     html_tags_regex = "<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>"
@@ -58,7 +63,6 @@ def preprocess_comments(comment):
 
     clean_comment_array = ''.join(clean_comment_array).lower()
     clean_comment_array = clean_comment_array.split()
-    print(clean_comment_array)
 
     #removes stop words. Isalpha removes numbers which also removes emjoi characters.
     word_list = []
@@ -67,10 +71,6 @@ def preprocess_comments(comment):
             word_list.append(word)
 
     return word_list
-
-# message_list = comments_dataframe["COMMENT"]
-# message_words = preprocess_comments(message_list)
-# print(message_words)
 
 #creates sparse matrix of all the words in the comments
 bag_of_words_transformer = CountVectorizer(analyzer=preprocess_comments).fit(comments_dataframe["COMMENT"])
