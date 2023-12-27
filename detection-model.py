@@ -60,10 +60,10 @@ def preprocess_comments(comment):
     clean_comment_array = clean_comment_array.split()
     print(clean_comment_array)
 
-    #removes stop words
+    #removes stop words. Isalpha removes numbers which also removes emjoi characters.
     word_list = []
     for word in clean_comment_array:
-        if word.lower() not in stopwords.words('english'):
+        if word.lower() not in stopwords.words('english') and word.isalpha():
             word_list.append(word)
 
     return word_list
