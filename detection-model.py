@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import re
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -12,24 +13,44 @@ import string
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn import metrics
 
 #imports data from csv dataset
-comments1 = pd.read_csv("./datasets/Youtube01-Psy.csv", encoding = "latin-1")
-comments2 = pd.read_csv("./datasets/Youtube02-KatyPerry.csv", encoding = "latin-1")
-comments3 = pd.read_csv("./datasets/Youtube03-LMFAO.csv", encoding = "latin-1")
-comments4 = pd.read_csv("./datasets/Youtube04-Eminem.csv", encoding = "latin-1")
-comments5 = pd.read_csv("./datasets/Youtube05-Shakira.csv", encoding = "latin-1")
+comments1 = pd.read_csv("./datasets/Youtube01-Psy.csv", encoding = "utf-8")
+comments2 = pd.read_csv("./datasets/Youtube02-KatyPerry.csv", encoding = "utf-8")
+comments3 = pd.read_csv("./datasets/Youtube03-LMFAO.csv", encoding = "utf-8")
+comments4 = pd.read_csv("./datasets/Youtube04-Eminem.csv", encoding = "utf-8")
+comments5 = pd.read_csv("./datasets/Youtube05-Shakira.csv", encoding = "utf-8")
 
 #combines csv datasets and removes unnecessary columns
-comments_dataframe = pd.concat([comments1, comments2, comments3, comments4, comments5])
+comments_dataframe = pd.concat([comments1, comments2, comments3, comments4, comments5], ignore_index=True)
 comments_dataframe = comments_dataframe.drop(labels = ["AUTHOR", "DATE"], axis = 1)
 comments_dataframe.columns = ["COMMENT_ID", "COMMENT", "SPAM_CLASSIFICATION"]
 
 #adds length column to dataframe
 comments_dataframe["LENGTH"] = comments_dataframe["COMMENT"].apply(len)
 
-#function to remove stop words, punctuation and numbers from comment
+#splits dataset into training and testing set 70/30
+comments_train_split, comments_test_split, spam_classification_train, spam_classification_test = train_test_split(comments_dataframe["COMMENT"], comments_dataframe["SPAM_CLASSIFICATION"], test_size=0.3, random_state=42)
+
+#function to remove stop words, punctuation, numbers and URLs from comment
 def preprocess_comments(comment):
+    #regular expression attributed to https://urlregex.com/index.html
+    http_urlhyperlink_regex = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+
+    comment = re.sub(http_urlhyperlink_regex, 'urlsubstitute', comment)
+    print(comment)
+
+    #regular expression attributed to https://uibakery.io/regex-library/html-regex-python
+    html_tags_regex = "<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>"
+    comment = re.sub(html_tags_regex, '', comment)
+
+    #removes \ufeff from comment
+    comment = comment.replace("\ufeff", '')
+
+    #removes punctuation
     clean_comment_array = []
     for char in comment:
         if char not in string.punctuation:
@@ -37,10 +58,12 @@ def preprocess_comments(comment):
 
     clean_comment_array = ''.join(clean_comment_array).lower()
     clean_comment_array = clean_comment_array.split()
+    print(clean_comment_array)
 
+    #removes stop words
     word_list = []
     for word in clean_comment_array:
-        if word.lower() not in stopwords.words('english') and word.isalpha():
+        if word.lower() not in stopwords.words('english'):
             word_list.append(word)
 
     return word_list
@@ -59,3 +82,14 @@ comments_tfidf = tfidf_transformer.transform(comments_bow)
 
 #Multinomial Naive Bayes detection model
 mnb_detection = MultinomialNB().fit(comments_tfidf, comments_dataframe["SPAM_CLASSIFICATION"])
+
+#creates pipeline to process training data
+mnb_pipeline = Pipeline([
+    ('bag_of_words', CountVectorizer(analyzer=preprocess_comments)),
+    ('tfidf', TfidfTransformer()),
+    ('classification_model', MultinomialNB())
+])
+
+mnb_pipeline.fit(comments_train_split, spam_classification_train)
+predictions_test = mnb_pipeline.predict(comments_test_split)
+print(metrics.classification_report(spam_classification_test, predictions_test))
