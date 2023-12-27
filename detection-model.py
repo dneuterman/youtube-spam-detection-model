@@ -9,6 +9,7 @@ import seaborn as sns
 import nltk
 from nltk.corpus import stopwords
 import string
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
@@ -72,16 +73,40 @@ def preprocess_comments(comment):
 
     return word_list
 
+def word_frequency_generator(comments_list, classification_list, spam_classification):
+    word_freq = {}
+    for i in range(len(comments_list)):
+        if classification_list.iloc[i] == spam_classification:
+            comment = preprocess_comments(comments_list.iloc[i])
+            for word in comment:
+                word_freq[word] = word_freq.get(word, 0) + 1
+
+    return word_freq
+
+def wordcloud_generator(word_freq_dict):
+    wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate_from_frequencies(word_freq_dict)
+
+    plt.figure(figsize=(10,5))
+    plt.imshow(wordcloud, interpolation="bilinear")
+    plt.axis("off")
+    plt.show()
+
+spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 1)
+wordcloud_generator(spam_train_words_freq)
+
+not_spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 0)
+wordcloud_generator(not_spam_train_words_freq)
+
 #creates sparse matrix of all the words in the comments
-bag_of_words_transformer = CountVectorizer(analyzer=preprocess_comments).fit(comments_dataframe["COMMENT"])
-comments_bow = bag_of_words_transformer.transform(comments_dataframe["COMMENT"])
+bag_of_words_transformer = CountVectorizer(analyzer=preprocess_comments).fit(comments_train_split)
+comments_train_bow = bag_of_words_transformer.transform(comments_train_split)
 
 #converts comments into tfidf word frequency
-tfidf_transformer = TfidfTransformer().fit(comments_bow)
-comments_tfidf = tfidf_transformer.transform(comments_bow)
+tfidf_transformer = TfidfTransformer().fit(comments_train_bow)
+comments_train_tfidf = tfidf_transformer.transform(comments_train_bow)
 
 #Multinomial Naive Bayes detection model
-mnb_detection = MultinomialNB().fit(comments_tfidf, comments_dataframe["SPAM_CLASSIFICATION"])
+mnb_detection = MultinomialNB().fit(comments_train_tfidf, spam_classification_train)
 
 #creates pipeline to process training data
 mnb_pipeline = Pipeline([
