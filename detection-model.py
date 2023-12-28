@@ -37,7 +37,7 @@ comments_dataframe["LENGTH"] = comments_dataframe["COMMENT"].apply(len)
 spam_classification_series = comments_dataframe.groupby("SPAM_CLASSIFICATION")["SPAM_CLASSIFICATION"].count()
 fig, ax = plt.subplots()
 ax.pie(spam_classification_series, labels=["Not Spam", "Spam"], autopct='%1.1f%%')
-plt.savefig("./plots/comments-classification-pie-chart.svg")
+plt.savefig("./static/plots/comments-classification-pie-chart.svg")
 
 #splits dataset into training and testing set 70/30
 comments_train_split, comments_test_split, spam_classification_train, spam_classification_test = train_test_split(comments_dataframe["COMMENT"], comments_dataframe["SPAM_CLASSIFICATION"], test_size=0.3, random_state=31)
@@ -89,7 +89,7 @@ def wordcloud_generator(word_freq_dict, wordcloud_filename):
     plt.figure(figsize=(10,5))
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.savefig(f"./plots/{wordcloud_filename}.svg")
+    plt.savefig(f"./static/plots/{wordcloud_filename}.svg")
 
 spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 1)
 wordcloud_generator(spam_train_words_freq, "spam-words-training-wordcloud")
