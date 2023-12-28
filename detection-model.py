@@ -4,12 +4,12 @@ import re
 
 import matplotlib.pyplot as plt
 import seaborn as sns
-%matplotlib inline
+#%matplotlib inline
 
 import nltk
 from nltk.corpus import stopwords
 import string
-from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
+from wordcloud import WordCloud, ImageColorGenerator
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
@@ -37,10 +37,10 @@ comments_dataframe["LENGTH"] = comments_dataframe["COMMENT"].apply(len)
 spam_classification_series = comments_dataframe.groupby("SPAM_CLASSIFICATION")["SPAM_CLASSIFICATION"].count()
 fig, ax = plt.subplots()
 ax.pie(spam_classification_series, labels=["Not Spam", "Spam"], autopct='%1.1f%%')
-plt.show()
+plt.savefig("./plots/comments-classification-pie-chart.svg")
 
 #splits dataset into training and testing set 70/30
-comments_train_split, comments_test_split, spam_classification_train, spam_classification_test = train_test_split(comments_dataframe["COMMENT"], comments_dataframe["SPAM_CLASSIFICATION"], test_size=0.3, random_state=42)
+comments_train_split, comments_test_split, spam_classification_train, spam_classification_test = train_test_split(comments_dataframe["COMMENT"], comments_dataframe["SPAM_CLASSIFICATION"], test_size=0.3, random_state=31)
 
 #function to remove stop words, punctuation, numbers and URLs from comment
 def preprocess_comments(comment):
@@ -83,30 +83,30 @@ def word_frequency_generator(comments_list, classification_list, spam_classifica
 
     return word_freq
 
-def wordcloud_generator(word_freq_dict):
+def wordcloud_generator(word_freq_dict, wordcloud_filename):
     wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate_from_frequencies(word_freq_dict)
 
     plt.figure(figsize=(10,5))
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.show()
+    plt.savefig(f"./plots/{wordcloud_filename}.svg")
 
 spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 1)
-wordcloud_generator(spam_train_words_freq)
+wordcloud_generator(spam_train_words_freq, "spam-words-training-wordcloud")
 
 not_spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 0)
-wordcloud_generator(not_spam_train_words_freq)
+wordcloud_generator(not_spam_train_words_freq, "not-spam-words-training-wordcloud")
 
 #creates sparse matrix of all the words in the comments
-bag_of_words_transformer = CountVectorizer(analyzer=preprocess_comments).fit(comments_train_split)
-comments_train_bow = bag_of_words_transformer.transform(comments_train_split)
+# bag_of_words_transformer = CountVectorizer(analyzer=preprocess_comments).fit(comments_train_split)
+# comments_train_bow = bag_of_words_transformer.transform(comments_train_split)
 
 #converts comments into tfidf word frequency
-tfidf_transformer = TfidfTransformer().fit(comments_train_bow)
-comments_train_tfidf = tfidf_transformer.transform(comments_train_bow)
+# tfidf_transformer = TfidfTransformer().fit(comments_train_bow)
+# comments_train_tfidf = tfidf_transformer.transform(comments_train_bow)
 
 #Multinomial Naive Bayes detection model
-mnb_detection = MultinomialNB().fit(comments_train_tfidf, spam_classification_train)
+# mnb_detection = MultinomialNB().fit(comments_train_tfidf, spam_classification_train)
 
 #creates pipeline to process training data
 mnb_pipeline = Pipeline([
@@ -116,5 +116,5 @@ mnb_pipeline = Pipeline([
 ])
 
 mnb_pipeline.fit(comments_train_split, spam_classification_train)
-predictions_test = mnb_pipeline.predict(comments_test_split)
-print(metrics.classification_report(spam_classification_test, predictions_test))
+predict_test_data = mnb_pipeline.predict(comments_test_split)
+print(metrics.classification_report(spam_classification_test, predict_test_data))
