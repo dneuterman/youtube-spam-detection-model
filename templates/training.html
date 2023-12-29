@@ -9,8 +9,6 @@
 <body>
     {% include 'navigation.html' %}
     <div class="container text-center">
-        <h2>Distribution of spam and non-spam comments in the dataset</h2>
-        <img src="{{ url_for('static', filename='plots/comments-classification-pie-chart.svg') }}"/>
         <h2>Wordcloud showing the most prominent words in the non-spam comments training dataset</h2>
         <img src="{{ url_for('static', filename='plots/not-spam-words-training-wordcloud.svg') }}"/>
         <h2>Wordcloud showing the most prominent words in the spam comments training dataset</h2>
