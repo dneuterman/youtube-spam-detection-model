@@ -13,6 +13,10 @@ with open("./datasets/json/clean-test-comments-dataset.json", "r") as file:
 
 app = Flask(__name__)
 
+@app.route("/")
+def index():
+    return render_template('index.html')
+
 @app.route("/dataset/")
 def dataset():
     sample_comment = ""
