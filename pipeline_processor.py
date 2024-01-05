@@ -9,22 +9,26 @@ import pickle
 
 from comments_preprocessor import comments_preprocessor
 
-#Takes pandas series as input, fits model and dumps to pickle file
-def fit_model(training_split, training_classification):
-    mnb_pipeline = Pipeline([
-        ('bag_of_words', CountVectorizer(analyzer=comments_preprocessor)),
-        ('tfidf', TfidfTransformer()),
-        ('classification_model', MultinomialNB())
-    ])
+class PipelineProcessor:
+    def __init__(self):
+        self.model = None
+        self.filename = "mnb_model.pickle"
 
-    mnb_pipeline.fit(training_split, training_classification)
-    filename = "mnb_model.pickle"
-    with open(filename, 'wb') as file:
-        pickle.dump(mnb_pipeline, file)
+    #Takes pandas series as input, fits model and dumps to pickle file
+    def fit_model(self, training_split, training_classification):
+        mnb_pipeline = Pipeline([
+            ('bag_of_words', CountVectorizer(analyzer=comments_preprocessor)),
+            ('tfidf', TfidfTransformer()),
+            ('classification_model', MultinomialNB())
+        ])
 
-def predict_model(test_split):
-    filename = "mnb_model.pickle"
-    with open(filename, 'rb') as file:
-        mnb_model = pickle.load(file)
-    return mnb_model.predict(test_split)
+        mnb_pipeline.fit(training_split, training_classification)
+        with open(self.filename, 'wb') as file:
+            pickle.dump(mnb_pipeline, file)
+
+    def predict_model(self, test_split):
+        if self.model == None:
+            with open(self.filename, 'rb') as file:
+                self.model = pickle.load(file)
+        return self.model.predict(test_split)
 

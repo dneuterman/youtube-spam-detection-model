@@ -12,11 +12,10 @@ from nltk.corpus import stopwords
 import string
 from wordcloud import WordCloud, ImageColorGenerator
 
-from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from sklearn.naive_bayes import MultinomialNB
 from sklearn.model_selection import train_test_split
-from sklearn.pipeline import Pipeline
 from sklearn import metrics
+
+from pipeline_processor import PipelineProcessor
 
 #imports data from csv dataset
 comments1 = pd.read_csv("./datasets/raw/Youtube01-Psy.csv", encoding = "utf-8")
@@ -136,12 +135,8 @@ wordcloud_generator(not_spam_train_words_freq, "not-spam-words-training-wordclou
 # mnb_detection = MultinomialNB().fit(comments_train_tfidf, spam_classification_train)
 
 #creates pipeline to process training data
-mnb_pipeline = Pipeline([
-    ('bag_of_words', CountVectorizer(analyzer=preprocess_comments)),
-    ('tfidf', TfidfTransformer()),
-    ('classification_model', MultinomialNB())
-])
+mnb_pipeline = PipelineProcessor()
 
-mnb_pipeline.fit(comments_train_split, spam_classification_train)
-predict_test_data = mnb_pipeline.predict(comments_test_split)
+mnb_pipeline.fit_model(comments_train_split, spam_classification_train)
+predict_test_data = mnb_pipeline.predict_model(comments_test_split)
 print(metrics.classification_report(spam_classification_test, predict_test_data))
