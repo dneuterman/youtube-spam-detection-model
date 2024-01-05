@@ -8,7 +8,7 @@
         <div class="navbar-nav">
             <a class="nav-link {{ 'active' if request.path == url_for('dataset') }}" href="{{ url_for('dataset') }}">Dataset</a>
             <a class="nav-link {{ 'active' if request.path == url_for('training') }}" aria-current="page" href="{{ url_for('training') }}">Training</a>
-            <a class="nav-link" href="#">Prediction</a>
+            <a class="nav-link {{ 'active' if request.path == url_for('prediction') }}" href="{{ url_for('prediction') }}">Prediction</a>
         </div>
         </div>
     </div>

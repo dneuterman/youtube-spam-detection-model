@@ -30,3 +30,7 @@ def dataset():
 @app.route("/training/")
 def training():
     return render_template('training.html')
+
+@app.route("/prediction/")
+def prediction():
+    return render_template('prediction.html', sample_comments = sample_comments_json)
