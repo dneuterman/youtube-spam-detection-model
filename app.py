@@ -6,6 +6,8 @@ with open("./datasets/json/training-comments-dataset.json", "r") as file:
     training_comments_json = json.load(file)
 with open("./datasets/json/test-comments-dataset.json", "r") as file:
     test_comments_json = json.load(file)
+with open("./datasets/json/sample-comments.json", "r") as file:
+    sample_comments_json = json.load(file)
 
 app = Flask(__name__)
 

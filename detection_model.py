@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import re
 import json
+import random
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -79,14 +80,23 @@ def wordcloud_generator(word_freq_dict, wordcloud_filename):
     plt.savefig(f"./static/plots/{wordcloud_filename}.svg")
 
 #creates small sample from test dataset to use for later
-def create_sample_test_dataset(test_dataset):
-    pass
+def create_sample_test_dataset(test_dataset, size):
+    comments_set = set()
+    comments_array = []
+    while size > 0:
+        rand_comment = random.randrange(0, len(test_dataset))
+        if rand_comment not in comments_set:
+            comments_array.append(test_dataset[rand_comment])
+            size -= 1
+    return comments_array
 
 comments_train_split_json = convert_initial_to_json(comments_train_split)
 comments_test_split_json = convert_initial_to_json(comments_test_split)
+sample_comments_json = create_sample_test_dataset(comments_test_split_json, 10)
 
-save_dataset_to_json(convert_initial_to_json(comments_train_split), "training-comments-dataset.json")
-save_dataset_to_json(convert_initial_to_json(comments_test_split), "test-comments-dataset.json")
+save_dataset_to_json(comments_train_split_json, "training-comments-dataset.json")
+save_dataset_to_json(comments_test_split_json, "test-comments-dataset.json")
+save_dataset_to_json(sample_comments_json, "sample-comments.json")
 
 spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 1)
 wordcloud_generator(spam_train_words_freq, "spam-words-training-wordcloud")
