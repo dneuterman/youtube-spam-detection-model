@@ -12,6 +12,7 @@ from comments_preprocessor import comments_preprocessor
 class PipelineProcessor:
     def __init__(self):
         self.model = None
+        self.prediction = None
         self.filename = "mnb_model.pickle"
 
     #Takes pandas series as input, fits model and dumps to pickle file
@@ -30,5 +31,8 @@ class PipelineProcessor:
         if self.model == None:
             with open(self.filename, 'rb') as file:
                 self.model = pickle.load(file)
-        return self.model.predict(test_split)
+        self.prediction = self.model.predict(test_split)
+
+    def get_score(self, test_split, test_classification):
+        return self.prediction.score(test_split, test_classification)
 

@@ -16,6 +16,7 @@ from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
 from pipeline_processor import PipelineProcessor
+from comments_preprocessor import comments_preprocessor
 
 #imports data from csv dataset
 comments1 = pd.read_csv("./datasets/raw/Youtube01-Psy.csv", encoding = "utf-8")
@@ -46,7 +47,7 @@ def convert_initial_to_json(split_comments_series, clean=False):
     comments_array = []
     for index in comments_index_list:
         if clean == True:
-            current_comment = " ".join(preprocess_comments(comments_dataframe["COMMENT"][index]))
+            current_comment = " ".join(comments_preprocessor(comments_dataframe["COMMENT"][index]))
         else:
             current_comment = comments_dataframe["COMMENT"][index]
         comment_info = {
@@ -62,43 +63,11 @@ def save_dataset_to_json(data, filename):
     with open(f"./datasets/json/{filename}", "w") as file:
         json.dump(data, file)
 
-
-#function to remove stop words, punctuation, numbers and URLs from comment
-def preprocess_comments(comment):
-    #regular expression attributed to https://urlregex.com/index.html
-    http_urlhyperlink_regex = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-
-    comment = re.sub(http_urlhyperlink_regex, 'urlsubstitute', comment)
-
-    #regular expression attributed to https://uibakery.io/regex-library/html-regex-python
-    html_tags_regex = "<(?:\"[^\"]*\"['\"]*|'[^']*'['\"]*|[^'\">])+>"
-    comment = re.sub(html_tags_regex, '', comment)
-
-    #removes \ufeff from comment
-    comment = comment.replace("\ufeff", '')
-
-    #removes punctuation
-    clean_comment_array = []
-    for char in comment:
-        if char not in string.punctuation:
-            clean_comment_array.append(char)
-
-    clean_comment_array = ''.join(clean_comment_array).lower()
-    clean_comment_array = clean_comment_array.split()
-
-    #removes stop words. Isalpha removes numbers which also removes emjoi characters.
-    word_list = []
-    for word in clean_comment_array:
-        if word.lower() not in stopwords.words('english') and word.isalpha():
-            word_list.append(word)
-
-    return word_list
-
 def word_frequency_generator(comments_list, classification_list, spam_classification):
     word_freq = {}
     for i in range(len(comments_list)):
         if classification_list.iloc[i] == spam_classification:
-            comment = preprocess_comments(comments_list.iloc[i])
+            comment = comments_preprocessor(comments_list.iloc[i])
             for word in comment:
                 word_freq[word] = word_freq.get(word, 0) + 1
 
@@ -138,5 +107,5 @@ wordcloud_generator(not_spam_train_words_freq, "not-spam-words-training-wordclou
 mnb_pipeline = PipelineProcessor()
 
 mnb_pipeline.fit_model(comments_train_split, spam_classification_train)
-predict_test_data = mnb_pipeline.predict_model(comments_test_split)
-print(metrics.classification_report(spam_classification_test, predict_test_data))
+mnb_pipeline.predict_model(comments_test_split)
+print(metrics.classification_report(spam_classification_test, mnb_pipeline.prediction))
