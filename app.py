@@ -34,7 +34,13 @@ def training():
 @app.route("/prediction/", methods = ["GET", "POST"])
 def prediction():
     if request.method == "POST":
-        comment = request.form.get('comment')
-        return render_template('completed-prediction.html', comment = comment)
+        result = []
+        if "user-comment-btn" in request.form:
+            result.append({
+                "comment": request.form.get('comment')
+            })
+        if "sample-comments-btn" in request.form:
+            result = sample_comments_json
+        return render_template('completed-prediction.html', result = result)
     else:
         return render_template('prediction.html', sample_comments = sample_comments_json)
