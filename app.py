@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import json
 import random
 
@@ -31,6 +31,10 @@ def dataset():
 def training():
     return render_template('training.html')
 
-@app.route("/prediction/")
+@app.route("/prediction/", methods = ["GET", "POST"])
 def prediction():
-    return render_template('prediction.html', sample_comments = sample_comments_json)
+    if request.method == "POST":
+        comment = request.form.get('comment')
+        return render_template('completed-prediction.html', comment = comment)
+    else:
+        return render_template('prediction.html', sample_comments = sample_comments_json)
