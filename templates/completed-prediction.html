@@ -14,6 +14,7 @@
             {% for comment in result %}
             <li class="list-group-item">
                 <p>Comment: {{ comment["comment"] }}</p>
+                <p>Prediction: {{ "Spam" if comment["predicted_classification"] == 1 else "Not Spam" }}</p>
             </li>
             {% endfor %}
         </ul>
