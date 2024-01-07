@@ -39,6 +39,7 @@ spam_classification_series = comments_dataframe.groupby("SPAM_CLASSIFICATION")["
 fig, ax = plt.subplots()
 ax.pie(spam_classification_series, labels=["Not Spam", "Spam"], autopct='%1.1f%%')
 plt.savefig("./static/plots/comments-classification-pie-chart.svg")
+plt.clf()
 
 #splits dataset into training and testing set 70/30
 comments_train_split, comments_test_split, spam_classification_train, spam_classification_test = train_test_split(comments_dataframe["COMMENT"], comments_dataframe["SPAM_CLASSIFICATION"], test_size=0.3, random_state=31)
@@ -78,6 +79,27 @@ def wordcloud_generator(word_freq_dict, wordcloud_filename):
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
     plt.savefig(f"./static/plots/{wordcloud_filename}.svg")
+    plt.clf()
+
+def word_freq_bar_chart_generator(word_freq_dict, chart_size, chart_filename):
+    words_to_plot = []
+    words_to_plot_freq = {}
+    for key, value in word_freq_dict.items():
+        words_to_plot.append(key)
+        words_to_plot_freq[value] = len(words_to_plot) - 1
+
+    sorted_dict = sorted(words_to_plot_freq, reverse=True)
+    plot_x, plot_y = [], []
+
+    for i in range(chart_size):
+        plot_y.append(words_to_plot[words_to_plot_freq[sorted_dict[i]]])
+        plot_x.append(sorted_dict[i])
+
+    sns.set(style="darkgrid")
+    sns.barplot(x=plot_x, y=plot_y, color="b", orient="h")
+    plt.xlabel("Word Frequency")
+    plt.savefig(f"./static/plots/{chart_filename}.svg")
+    plt.clf()
 
 #creates small sample from test dataset to use for later
 def create_sample_test_dataset(test_dataset, size):
@@ -99,9 +121,11 @@ save_dataset_to_json(comments_test_split_json, "test-comments-dataset.json")
 save_dataset_to_json(sample_comments_json, "sample-comments.json")
 
 spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 1)
-wordcloud_generator(spam_train_words_freq, "spam-words-training-wordcloud")
-
 not_spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 0)
+word_freq_bar_chart_generator(spam_train_words_freq, 10, "spam-words-training-bar-chart")
+word_freq_bar_chart_generator(not_spam_train_words_freq, 10, "not-spam-words-training-bar-chart")
+
+wordcloud_generator(spam_train_words_freq, "spam-words-training-wordcloud")
 wordcloud_generator(not_spam_train_words_freq, "not-spam-words-training-wordcloud")
 
 #creates sparse matrix of all the words in the comments
