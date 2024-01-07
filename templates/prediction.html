@@ -12,7 +12,7 @@
         <form action="{{ url_for('prediction') }}" method="POST">
             <div class="mb-3">
                 <label for="comment" class="form-label">Comment:</label>
-                <textarea name="comment" class="form-control"></textarea>
+                <textarea name="comment" id="comment" class="form-control"></textarea>
             </div>
             <button type="submit" class="btn btn-primary" name="user-comment-btn">Predict Comment</button>
         </form>
