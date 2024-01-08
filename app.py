@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 import json
 import random
 import os
@@ -26,7 +26,9 @@ class PredictedComments:
 mnb_pipeline = PipelineProcessor()
 predicted_comments = PredictedComments()
 
+UPLOAD_FOLDER = 'datasets/json'
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def index():
@@ -69,12 +71,26 @@ def prediction():
             return render_template('download-comments.html', filepath = filepath)
         result = []
         comments_to_predict = []
+
+        additional_param_flag = None
+        if "upload-comments-btn" in request.form:
+            uploaded_comments = request.files['upload-comment-file']
+            if uploaded_comments.filename == '':
+                return redirect(request.url)
+            
+            filename = "./datasets/json/uploaded-comments.json"
+            uploaded_comments.save("./datasets/json/uploaded-comments.json")
+            with open("./datasets/json/uploaded-comments.json", "r") as file:
+                result = json.load(file)
+            additional_param_flag = "uploaded-comments"
         if "user-comment-btn" in request.form:
             result.append({
                 "comment": request.form.get('comment')
             })
+            additional_param_flag = "user-comments"
         if "sample-comments-btn" in request.form:
             result = sample_comments_json
+            additional_param_flag = "sample-comments"
 
         for i in range(len(result)):
             comments_to_predict.append(result[i]["comment"])
@@ -83,6 +99,6 @@ def prediction():
         for i in range(len(result)):
             result[i]["predicted_classification"] = int(mnb_pipeline.prediction[i])
         predicted_comments.set_comments(result)
-        return render_template('completed-prediction.html', result = result)
+        return render_template('completed-prediction.html', result = result, form_button_name = additional_param_flag)
     else:
         return render_template('prediction.html', sample_comments = sample_comments_json)
