@@ -139,11 +139,11 @@ def confusion_matrix_generator(classification_test, predicted_test):
     confusion_matrix = metrics.confusion_matrix(classification_test, predicted_test)
     print(confusion_matrix)
 
-    labels = ["True Neg", "False Pos", "False Neg", "True Pos"]
+    labels = ["True Negative", "False Positive", "False Negative", "True Positive"]
     flattened_cf = confusion_matrix.flatten()
     sum_of_cf= np.sum(confusion_matrix)
     for i in range(len(labels)):
-        labels[i] = f"{labels[i]}\n" + "{0:.2%}".format(flattened_cf[i]/sum_of_cf)
+        labels[i] = f"{labels[i]}\n{flattened_cf[i]} of {sum_of_cf}\n" + "{0:.2%}".format(flattened_cf[i]/sum_of_cf)
 
     labels = np.asarray(labels).reshape(2,2)
     sns.heatmap(confusion_matrix, annot=labels, fmt='', cmap='Blues')
@@ -165,3 +165,4 @@ print(f"Accuracy Score: {classifcation_report_dict['accuracy']}")
 print(f"Precision Macro Average: {classifcation_report_dict['macro avg']['precision']}")
 print(f"Recall Macro Average: {classifcation_report_dict['macro avg']['recall']}")
 print(f"F1-Score Macro Average: {classifcation_report_dict['macro avg']['f1-score']}")
+save_dataset_to_json(classifcation_report_dict, "test-comments-classification-report.json")

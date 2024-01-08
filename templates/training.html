@@ -9,10 +9,60 @@
 <body>
     {% include 'navigation.html' %}
     <div class="container text-center">
-        <h2>Wordcloud showing the most prominent words in the non-spam comments training dataset</h2>
-        <img src="{{ url_for('static', filename='plots/not-spam-words-training-wordcloud.svg') }}"/>
-        <h2>Wordcloud showing the most prominent words in the spam comments training dataset</h2>
-        <img src="{{ url_for('static', filename='plots/spam-words-training-wordcloud.svg') }}"/>
+        <h2>Wordcloud and bar graph showing the most prominent words in the non-spam comments training dataset</h2>
+        <div>
+            <img src="{{ url_for('static', filename='plots/not-spam-words-training-wordcloud.svg') }}"/>
+            <img src="{{ url_for('static', filename='plots/not-spam-words-training-bar-chart.svg') }}"/>
+        </div>
+        <h2>Wordcloud and bar graph showing the most prominent words in the spam comments training dataset</h2>
+        <div>
+            <img src="{{ url_for('static', filename='plots/spam-words-training-wordcloud.svg') }}"/>
+            <img src="{{ url_for('static', filename='plots/spam-words-training-bar-chart.svg') }}"/>
+        </div>
+        <h2>Confusion matrix and associated metrics</h2>
+        <img src="{{ url_for('static', filename='plots/test-prediction-cf-matrix.svg') }}">
+        <p>{{ "{0:.2f}".format(classification_report['accuracy'] * 100) }}% accuracy prediction for {{ classification_report['macro avg']['support'] }} comments.</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Precision</th>
+                    <th scope="col">Recall</th>
+                    <th scope="col">F1-Score</th>
+                    <th scope="col">Support</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Not Spam(0)</th>
+                    <td>{{ "{0:.2f}".format(classification_report['0']['precision']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['0']['recall']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['0']['f1-score']) }}</td>
+                    <td>{{ classification_report['0']['support'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Spam(1)</th>
+                    <td>{{ "{0:.2f}".format(classification_report['1']['precision']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['1']['recall']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['1']['f1-score']) }}</td>
+                    <td>{{ classification_report['1']['support'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Macro Avg</th>
+                    <td>{{ "{0:.2f}".format(classification_report['macro avg']['precision']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['macro avg']['recall']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['macro avg']['f1-score']) }}</td>
+                    <td>{{ classification_report['macro avg']['support'] }}</td>
+                </tr>
+                <tr>
+                    <th scope="row">Weighted Avg</th>
+                    <td>{{ "{0:.2f}".format(classification_report['weighted avg']['precision']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['weighted avg']['recall']) }}</td>
+                    <td>{{ "{0:.2f}".format(classification_report['weighted avg']['f1-score']) }}</td>
+                    <td>{{ classification_report['weighted avg']['support'] }}</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>

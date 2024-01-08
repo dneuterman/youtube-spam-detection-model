@@ -10,6 +10,8 @@ with open("./datasets/json/test-comments-dataset.json", "r") as file:
     test_comments_json = json.load(file)
 with open("./datasets/json/sample-comments.json", "r") as file:
     sample_comments_json = json.load(file)
+with open("./datasets/json/test-comments-classification-report.json", "r") as file:
+    test_classification_report = json.load(file)
 
 class PredictedComments:
     def __init__(self):
@@ -44,7 +46,7 @@ def dataset():
 
 @app.route("/training/")
 def training():
-    return render_template('training.html')
+    return render_template('training.html', classification_report = test_classification_report)
 
 @app.route("/prediction/", methods = ["GET", "POST"])
 def prediction():
