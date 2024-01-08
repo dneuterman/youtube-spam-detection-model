@@ -128,20 +128,40 @@ word_freq_bar_chart_generator(not_spam_train_words_freq, 10, "not-spam-words-tra
 wordcloud_generator(spam_train_words_freq, "spam-words-training-wordcloud")
 wordcloud_generator(not_spam_train_words_freq, "not-spam-words-training-wordcloud")
 
-#creates sparse matrix of all the words in the comments
-# bag_of_words_transformer = CountVectorizer(analyzer=preprocess_comments).fit(comments_train_split)
-# comments_train_bow = bag_of_words_transformer.transform(comments_train_split)
-
-#converts comments into tfidf word frequency
-# tfidf_transformer = TfidfTransformer().fit(comments_train_bow)
-# comments_train_tfidf = tfidf_transformer.transform(comments_train_bow)
-
-#Multinomial Naive Bayes detection model
-# mnb_detection = MultinomialNB().fit(comments_train_tfidf, spam_classification_train)
-
 #creates pipeline to process training data
 mnb_pipeline = PipelineProcessor()
 
 mnb_pipeline.fit_model(comments_train_split, spam_classification_train)
 mnb_pipeline.predict_model(comments_test_split)
 print(metrics.classification_report(spam_classification_test, mnb_pipeline.prediction))
+
+def confusion_matrix_generator(classification_test, predicted_test):
+    confusion_matrix = metrics.confusion_matrix(classification_test, predicted_test)
+    print(confusion_matrix)
+
+    labels = ["True Neg", "False Pos", "False Neg", "True Pos"]
+    flattened_cf = confusion_matrix.flatten()
+    sum_of_cf= np.sum(confusion_matrix)
+    for i in range(len(labels)):
+        labels[i] = f"{labels[i]}\n" + "{0:.2%}".format(flattened_cf[i]/sum_of_cf)
+
+    labels = np.asarray(labels).reshape(2,2)
+    sns.heatmap(confusion_matrix, annot=labels, fmt='', cmap='Blues')
+    plt.ylabel("Actual Values")
+    plt.xlabel("Predicted Values")
+    plt.savefig(f"./static/plots/test-prediction-cf-matrix.svg")
+    plt.clf()
+
+confusion_matrix_generator(spam_classification_test, mnb_pipeline.prediction)
+accuracy = metrics.accuracy_score(spam_classification_test, mnb_pipeline.prediction)
+macro_precision_average = metrics.precision_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
+macro_recall_average = metrics.recall_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
+macro_f1_average = metrics.f1_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
+
+print(metrics.classification_report(spam_classification_test, mnb_pipeline.prediction))
+classifcation_report_dict = metrics.classification_report(spam_classification_test, mnb_pipeline.prediction, output_dict=True)
+print(classifcation_report_dict)
+print(f"Accuracy Score: {classifcation_report_dict['accuracy']}")
+print(f"Precision Macro Average: {classifcation_report_dict['macro avg']['precision']}")
+print(f"Recall Macro Average: {classifcation_report_dict['macro avg']['recall']}")
+print(f"F1-Score Macro Average: {classifcation_report_dict['macro avg']['f1-score']}")
