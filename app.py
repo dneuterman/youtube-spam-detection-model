@@ -99,6 +99,6 @@ def prediction():
         for i in range(len(result)):
             result[i]["predicted_classification"] = int(mnb_pipeline.prediction[i])
         predicted_comments.set_comments(result)
-        return render_template('completed-prediction.html', result = result, form_button_name = additional_param_flag)
+        return render_template('completed-prediction.html', result = json.dumps(result), form_button_name = additional_param_flag)
     else:
         return render_template('prediction.html', sample_comments = sample_comments_json)
