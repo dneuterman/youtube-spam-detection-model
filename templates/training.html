@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,18 +9,30 @@
 <body>
     {% include 'navigation.html' %}
     <div class="container text-center">
-        <h2>Wordcloud and bar graph showing the most prominent words in the non-spam comments training dataset</h2>
-        <div>
-            <img src="{{ url_for('static', filename='plots/not-spam-words-training-wordcloud.svg') }}"/>
-            <img src="{{ url_for('static', filename='plots/not-spam-words-training-bar-chart.svg') }}"/>
+        <h2>Non-spam comments training dataset</h2>
+        <div class="mb-5">
+            <figure class="figure">
+                <img class="figure-img img-fluid" src="{{ url_for('static', filename='plots/not-spam-words-training-wordcloud.png') }}"/>
+                <figcaption class="figure-caption">Wordcloud of non-spam comments</figcaption>
+            </figure>
+            <figure class="figure">
+                <img class="figure-img img-fluid" src="{{ url_for('static', filename='plots/not-spam-words-training-bar-chart.png') }}"/>
+                <figcaption class="figure-caption">Top ten most frequent non-spam words</figcaption>
+            </figure>
         </div>
-        <h2>Wordcloud and bar graph showing the most prominent words in the spam comments training dataset</h2>
-        <div>
-            <img src="{{ url_for('static', filename='plots/spam-words-training-wordcloud.svg') }}"/>
-            <img src="{{ url_for('static', filename='plots/spam-words-training-bar-chart.svg') }}"/>
+        <h2>Spam comments training dataset</h2>
+        <div class="mb-5">
+            <figure class="figure">
+                <img class="figure-img img-fluid" src="{{ url_for('static', filename='plots/spam-words-training-wordcloud.png') }}"/>
+                <figcaption class="figure-caption">Wordcloud of spam comments</figcaption>
+            </figure>
+            <figure class="figure">
+                <img class="figure-img img-fluid" src="{{ url_for('static', filename='plots/spam-words-training-bar-chart.png') }}"/>
+                <figcaption class="figure-caption">Top ten most frequent spam words</figcaption>
+            </figure>
         </div>
         <h2>Confusion matrix and associated metrics</h2>
-        <img src="{{ url_for('static', filename='plots/test-prediction-cf-matrix.svg') }}">
+        <img src="{{ url_for('static', filename='plots/test-prediction-cf-matrix.png') }}">
         <p>{{ "{0:.2f}".format(classification_report['accuracy'] * 100) }}% accuracy prediction for {{ classification_report['macro avg']['support'] }} comments.</p>
         <table class="table">
             <thead>

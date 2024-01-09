@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,22 +9,27 @@
 <body>
     {% include 'navigation.html' %}
     <div class="container">
+        <h2>Type a comment to predict</h2>
         <form action="{{ url_for('prediction') }}" method="POST">
-            <div class="mb-3">
-                <label for="comment" class="form-label">Comment</label>
-                <textarea name="comment" id="comment" class="form-control" required></textarea>
+            <div class="input-group mb-5">
+                <span class="input-group-text">Comment</span>
+                <textarea name="comment" placeholder="Type a comment here" id="comment" class="form-control" rows="3" required></textarea>
+                <button type="submit" class="btn btn-primary" name="user-comment-btn">Predict Single Typed Comment</button>
             </div>
-            <button type="submit" class="btn btn-primary" name="user-comment-btn">Predict Single Typed Comment</button>
         </form>
+        <h2>Upload comments from json file</h2>
         <form id="file-upload-form" action="{{ url_for('prediction') }}" method="POST" enctype="multipart/form-data">
-            <label for="upload-comment-file" class="form-label">Upload JSON file with comments</label>
-            <input type="file" name="upload-comment-file" id="upload-comment-file" accept=".json"/>
-            <button type="submit" class="btn btn-primary" name="upload-comments-btn">Upload Comments to Predict</button>
-        </form>
-        <form action="{{ url_for('prediction') }}" method="POST">
-            <button type="submit" class="btn btn-primary" name="sample-comments-btn">Predict Provided Sample Comments</button>
+            <div class="input-group mb-5">
+                <input type="file" name="upload-comment-file" id="upload-comment-file" accept=".json" class="form-control"/>
+                <button type="submit" class="btn btn-primary" name="upload-comments-btn">Upload Comments to Predict</button>
+            </div>
         </form>
         <h2>Sample Comments</h2>
+        <div class="mb-3">
+            <form action="{{ url_for('prediction') }}" method="POST">
+                <button type="submit" class="btn btn-primary" name="sample-comments-btn">Predict Provided Sample Comments</button>
+            </form>
+        </div>
         <ul class="list-group list-group-flush">
             {% for comment in sample_comments %}
             <li class="list-group-item">
@@ -35,40 +40,5 @@
         </ul>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    <!-- <script>
-        const fileUploadForm = document.querySelector("#file-upload-form");
-        const fileUploadInput = document.querySelector("#upload-comment-file");
-
-        fileUploadForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-
-            if (fileUploadInput.value.length === 0) return;
-
-            const fileReader = new FileReader();
-            fileReader.onload = (loadEvent) => {
-                let json_data = JSON.parse(loadEvent.target.result);
-                json_data.push({'file-upload' : true});
-                console.log(json_data);
-
-                // fetch("{{ url_for('prediction') }}", {
-                //     method: "POST",
-                //     body: JSON.stringify(json_data),
-                //     headers: {
-                //         "Content-type": "application/json"
-                //     }
-                // }).then(response => {
-                //     console.log(response)
-                //     console.log(response.redirected)
-                //     if (response.redirected) {
-                //         window.location = response.url;
-                //     }
-                // }).catch(error => {
-                //     console.error(error);
-                // });
-            }
-            fileReader.readAsText(fileUploadInput.files[0]);
-            fileUploadForm.submit();
-        })
-    </script> -->
 </body>
 </html>

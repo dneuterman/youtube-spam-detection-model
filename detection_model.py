@@ -38,7 +38,8 @@ comments_dataframe["LENGTH"] = comments_dataframe["COMMENT"].apply(len)
 spam_classification_series = comments_dataframe.groupby("SPAM_CLASSIFICATION")["SPAM_CLASSIFICATION"].count()
 fig, ax = plt.subplots()
 ax.pie(spam_classification_series, labels=["Not Spam", "Spam"], autopct='%1.1f%%')
-plt.savefig("./static/plots/comments-classification-pie-chart.svg")
+fig.tight_layout()
+plt.savefig("./static/plots/comments-classification-pie-chart.png")
 plt.clf()
 
 #splits dataset into training and testing set 70/30
@@ -75,10 +76,10 @@ def word_frequency_generator(comments_list, classification_list, spam_classifica
 def wordcloud_generator(word_freq_dict, wordcloud_filename):
     wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate_from_frequencies(word_freq_dict)
 
-    plt.figure(figsize=(10,5))
+    plt.tight_layout()
     plt.imshow(wordcloud, interpolation="bilinear")
     plt.axis("off")
-    plt.savefig(f"./static/plots/{wordcloud_filename}.svg")
+    plt.savefig(f"./static/plots/{wordcloud_filename}.png")
     plt.clf()
 
 def word_freq_bar_chart_generator(word_freq_dict, chart_size, chart_filename):
@@ -97,8 +98,8 @@ def word_freq_bar_chart_generator(word_freq_dict, chart_size, chart_filename):
 
     sns.set(style="darkgrid")
     sns.barplot(x=plot_x, y=plot_y, color="b", orient="h")
-    plt.xlabel("Word Frequency")
-    plt.savefig(f"./static/plots/{chart_filename}.svg")
+    plt.tight_layout()
+    plt.savefig(f"./static/plots/{chart_filename}.png")
     plt.clf()
 
 #creates small sample from test dataset to use for later
@@ -133,11 +134,9 @@ mnb_pipeline = PipelineProcessor()
 
 mnb_pipeline.fit_model(comments_train_split, spam_classification_train)
 mnb_pipeline.predict_model(comments_test_split)
-print(metrics.classification_report(spam_classification_test, mnb_pipeline.prediction))
 
 def confusion_matrix_generator(classification_test, predicted_test):
     confusion_matrix = metrics.confusion_matrix(classification_test, predicted_test)
-    print(confusion_matrix)
 
     labels = ["True Negative", "False Positive", "False Negative", "True Positive"]
     flattened_cf = confusion_matrix.flatten()
@@ -149,7 +148,8 @@ def confusion_matrix_generator(classification_test, predicted_test):
     sns.heatmap(confusion_matrix, annot=labels, fmt='', cmap='Blues')
     plt.ylabel("Actual Values")
     plt.xlabel("Predicted Values")
-    plt.savefig(f"./static/plots/test-prediction-cf-matrix.svg")
+    plt.tight_layout()
+    plt.savefig(f"./static/plots/test-prediction-cf-matrix.png")
     plt.clf()
 
 confusion_matrix_generator(spam_classification_test, mnb_pipeline.prediction)
@@ -158,11 +158,5 @@ macro_precision_average = metrics.precision_score(spam_classification_test, mnb_
 macro_recall_average = metrics.recall_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
 macro_f1_average = metrics.f1_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
 
-print(metrics.classification_report(spam_classification_test, mnb_pipeline.prediction))
 classifcation_report_dict = metrics.classification_report(spam_classification_test, mnb_pipeline.prediction, output_dict=True)
-print(classifcation_report_dict)
-print(f"Accuracy Score: {classifcation_report_dict['accuracy']}")
-print(f"Precision Macro Average: {classifcation_report_dict['macro avg']['precision']}")
-print(f"Recall Macro Average: {classifcation_report_dict['macro avg']['recall']}")
-print(f"F1-Score Macro Average: {classifcation_report_dict['macro avg']['f1-score']}")
 save_dataset_to_json(classifcation_report_dict, "test-comments-classification-report.json")

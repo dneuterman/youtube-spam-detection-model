@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +10,9 @@
     {% include 'navigation.html' %}
     <div class="container">
         <h2>Prediction Complete!</h2>
-        <button type="button" id="download-spam-btn" class="btn btn-primary">Save spam comments to be deleted</button>
+        <div class="mb-3">
+            <button type="button" id="download-spam-btn" class="btn btn-primary">Save spam comments to be deleted</button>
+        </div>
         <ul class="list-group list-group-flush" id="comments-list">
         </ul>
     </div>
