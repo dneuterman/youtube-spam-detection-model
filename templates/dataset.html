@@ -10,11 +10,11 @@
     {% include 'navigation.html' %}
     <div class="container text-center">
         <h2>Sample comment from dataset</h2>
-        <p>comment = {{ sample_comment }}</p>
-        <p>classification = {{ sample_comment_classification }}</p>
+        <p>Comment: {{ sample_comment }}</p>
+        <p>Classification: {{ "Not Spam" if sample_comment_classification == 0 else "Spam" }}</p>
         <h2>Sample comment from dataset after cleaning and preprocessing</h2>
-        <p>comment = {{ clean_sample_comment }}</p>
-        <p>classification = {{ sample_comment_classification }}</p>
+        <p>Comment: {{ clean_sample_comment }}</p>
+        <p>Classification: {{ "Not Spam" if sample_comment_classification == 0 else "Spam" }}</p>
         <h2>Distribution of spam and non-spam comments in the dataset</h2>
         <img src="{{ url_for('static', filename='plots/comments-classification-pie-chart.png') }}"/>
     </div>

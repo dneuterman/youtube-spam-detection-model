@@ -63,6 +63,7 @@ def save_dataset_to_json(data, filename):
     with open(f"./datasets/json/{filename}", "w") as file:
         json.dump(data, file)
 
+#generates a dictionary of the occurences of each word in the dataset
 def word_frequency_generator(comments_list, classification_list, spam_classification):
     word_freq = {}
     for i in range(len(comments_list)):
@@ -73,6 +74,7 @@ def word_frequency_generator(comments_list, classification_list, spam_classifica
 
     return word_freq
 
+#creates wordcloud showing prominent words
 def wordcloud_generator(word_freq_dict, wordcloud_filename):
     wordcloud = WordCloud(max_font_size=50, max_words=100, background_color="white").generate_from_frequencies(word_freq_dict)
 
@@ -82,6 +84,7 @@ def wordcloud_generator(word_freq_dict, wordcloud_filename):
     plt.savefig(f"./static/plots/{wordcloud_filename}.png")
     plt.clf()
 
+#creates bar char of word frequency
 def word_freq_bar_chart_generator(word_freq_dict, chart_size, chart_filename):
     words_to_plot = []
     words_to_plot_freq = {}
@@ -113,6 +116,7 @@ def create_sample_test_dataset(test_dataset, size):
             size -= 1
     return comments_array
 
+#saves dataset to json file for use on front end
 comments_train_split_json = convert_initial_to_json(comments_train_split)
 comments_test_split_json = convert_initial_to_json(comments_test_split)
 sample_comments_json = create_sample_test_dataset(comments_test_split_json, 10)
@@ -121,6 +125,7 @@ save_dataset_to_json(comments_train_split_json, "training-comments-dataset.json"
 save_dataset_to_json(comments_test_split_json, "test-comments-dataset.json")
 save_dataset_to_json(sample_comments_json, "sample-comments.json")
 
+#creates charts relating to the dataset
 spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 1)
 not_spam_train_words_freq = word_frequency_generator(comments_train_split, spam_classification_train, 0)
 word_freq_bar_chart_generator(spam_train_words_freq, 10, "spam-words-training-bar-chart")
