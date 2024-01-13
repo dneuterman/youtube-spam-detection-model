@@ -20,6 +20,7 @@ from comments_preprocessor import comments_preprocessor
 def init_model():
     with zipfile.ZipFile("./datasets/raw/youtube+spam+collection.zip", "r") as file:
         file.extractall(os.path.join(".", "datasets", "raw"))
+    print("Raw spam data extracted.")
 
 def build_model():
     #imports data from csv dataset
@@ -161,13 +162,11 @@ def build_model():
         plt.clf()
 
     confusion_matrix_generator(spam_classification_test, mnb_pipeline.prediction)
-    accuracy = metrics.accuracy_score(spam_classification_test, mnb_pipeline.prediction)
-    macro_precision_average = metrics.precision_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
-    macro_recall_average = metrics.recall_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
-    macro_f1_average = metrics.f1_score(spam_classification_test, mnb_pipeline.prediction, average="macro")
 
     classifcation_report_dict = metrics.classification_report(spam_classification_test, mnb_pipeline.prediction, output_dict=True)
     save_dataset_to_json(classifcation_report_dict, "test-comments-classification-report.json")
+
+    print("Spam detection model built and ready to run.")
 
 if __name__ == "__main__":
     command_parser = ArgumentParser()
