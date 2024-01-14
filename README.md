@@ -24,7 +24,7 @@ There are two ways to build and run the model. Either through the provided pytho
     Your terminal should now be showing the activated virtual environment in parentheses next to you current working directory. For example:
 
     ```
-    (.venv) C:\Users\...
+    (.venv) C:\Users\...\current_working_directory\
     ```
 
     Remember to activate your virtual environment prior to running any other commands.
