@@ -63,8 +63,8 @@ def prediction():
                 return redirect(request.url)
             
             filename = "./datasets/json/uploaded-comments.json"
-            uploaded_comments.save("./datasets/json/uploaded-comments.json")
-            with open("./datasets/json/uploaded-comments.json", "r") as file:
+            uploaded_comments.save(filename)
+            with open(filename, "r") as file:
                 result = json.load(file)
             additional_param_flag = "uploaded-comments"
         if "user-comment-btn" in request.form:
