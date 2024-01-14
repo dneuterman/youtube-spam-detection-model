@@ -55,7 +55,7 @@ There are two ways to build and run the model. Either through the provided pytho
     ```
     flask run
     ```
-    The default url and port for the running server is [http://127.0.0.1:5000](http://127.0.0.1:5000). You can now access the application at this url. To close the sever, type **CTRL+C** in the terminal and follow the prompt to terminate the program.
+    The default url and port for the running server is [http://127.0.0.1:5000](http://127.0.0.1:5000). You can now access the application at this url. To close the server, type **CTRL+C** in the terminal and follow the prompt to terminate the program.
 
 ### Creating a distribution file
 1. After cloning the repository to your destination folder, run the following command in your terminal in the destination folder directory:
@@ -82,7 +82,7 @@ There are two ways to build and run the model. Either through the provided pytho
     model.bat run
     ```
 
-    This will start the flask application that can be accessed at the url: [http://127.0.0.1:5000](http://127.0.0.1:5000). To close the sever, type **CTRL+C** in the terminal and follow the prompt to terminate the program.
+    This will start the flask application that can be accessed at the url: [http://127.0.0.1:5000](http://127.0.0.1:5000). To close the server, type **CTRL+C** in the terminal and follow the prompt to terminate the program.
 
 ## Using the application
 When you first open the application, you are greeted with a welcome page that details an overview of the application as well as the functionality of each page. The prediction page allows you to upload a json file containing comments to be predicted. They should be in the same format as detailed on the welcome page. A set of sample comments in a json file is also available in the **datasets/json** folder to test comment uploads and predictions.
