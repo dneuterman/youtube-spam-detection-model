@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect
 import json
 import random
-import os
 from pipeline_processor import PipelineProcessor
 
 with open("./datasets/json/training-comments-dataset.json", "r") as file:
@@ -36,6 +35,7 @@ def index():
 
 @app.route("/dataset/")
 def dataset():
+    #chooses random comment to display on dataset page
     sample_comment = ""
     clean_sample_comment = ""
     sample_comment_classification = ""
@@ -57,6 +57,7 @@ def prediction():
         comments_to_predict = []
 
         additional_param_flag = None
+        #saves uploaded comments to file and sends data to render_template
         if "upload-comments-btn" in request.form:
             uploaded_comments = request.files['upload-comment-file']
             if uploaded_comments.filename == '':
@@ -67,11 +68,13 @@ def prediction():
             with open(filename, "r") as file:
                 result = json.load(file)
             additional_param_flag = "uploaded-comments"
+        #takes single user-supplied comment and sends to render_template
         if "user-comment-btn" in request.form:
             result.append({
                 "comment": request.form.get('comment')
             })
             additional_param_flag = "user-comments"
+        #takes provided sample comments and sends to render_template
         if "sample-comments-btn" in request.form:
             result = sample_comments_json
             additional_param_flag = "sample-comments"

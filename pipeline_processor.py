@@ -1,6 +1,3 @@
-import numpy as np
-import pandas as pd
-
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
@@ -15,7 +12,7 @@ class PipelineProcessor:
         self.prediction = None
         self.filename = "mnb_model.pickle"
 
-    #Takes pandas series as input, fits model and dumps to pickle file
+    #Takes series as input, fits model and dumps to pickle file
     def fit_model(self, training_split, training_classification):
         mnb_pipeline = Pipeline([
             ('bag_of_words', CountVectorizer(analyzer=comments_preprocessor)),
