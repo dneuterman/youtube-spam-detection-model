@@ -160,7 +160,13 @@ cython_debug/
 #.idea/
 
 # Additional
-datasets/
+datasets/json
+datasets/saved
+datasets/raw/Youtube01-Psy.csv
+datasets/raw/Youtube02-KatyPerry.csv
+datasets/raw/Youtube03-LMFAO.csv
+datasets/raw/Youtube04-Eminem.csv
+datasets/raw/Youtube05-Shakira.csv
 static/
 mnb_model.pickle
 dist.zip
