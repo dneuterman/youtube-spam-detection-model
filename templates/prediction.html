@@ -34,7 +34,7 @@
             {% for comment in sample_comments %}
             <li class="list-group-item">
                 <p>Comment: {{ comment["comment"] }}</p>
-                <p>Classification: {{ "Not Spam" if comment["actual_classification"] == 0 else "Spam" }}</p>
+                <p>Actual Classification: {{ "Not Spam" if comment["actual_classification"] == 0 else "Spam" }}</p>
             </li>
             {% endfor %}
         </ul>
