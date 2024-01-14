@@ -9,8 +9,39 @@
 <body>
     {% include 'navigation.html' %}
     <div class="container text-center">
-        <h2>Hello World!</h2>
+        <section class="mb-3">
+            <h2>Overview</h2>
+            <p>This application is designed to detect spam comments within a YouTube comment section. As you can see in the navbar, there are three sections that provide different inforgraphics and functionality. This spam detection algorithm uses a multinomial Naive Bayes model to predict whether a YouTube comment is spam or not spam. A description of each page's functionality is provided below.</p>
+        </section>
+        <section class="mb-3">
+            <h2>Dataset</h2>
+            <p>The dataset page provides infromation about the raw dataset that is used to generate the multinomial Naive Bayes model. It shows a sample of what a raw YouTube comment looks like and then it shows what that same comment looks like after it has been cleaned and preprocessed for training the model. It also shows the amount of spam and non-spam comments within the raw dataset.</p>
+        </section>
+        <section class="mb-3">
+            <h2>Training</h2>
+            <p>The training page provides information on the groupings of the training data that is used to generate the spam detection model. It shows a wordcloud and frequency bar graph of the most common words within the group of smap comments. And it also shows the same for the group of non-spam comments. Finally, it displays a confusion matrix detailing the results from a separate dataset that is used to test the generated spam detection model. With an accuracy greater than 90%, you can be sure that spam comments will be accurately detected.</p>
+        </section>
+        <section class="mb-3">
+            <h2>Prediction</h2>
+            <p>Finally, the prediction page allows you to supply comments to the model for it to predict. There is an option to test an individual comment, uploading your own json dataset of YouTube comments, or try out a sample dataset that has been provided. When uploading your own json dataset, it should at the minimum have the key, "comment", which is the content of the YouTube comment to be parsed by the model. If these are actual YouTube comments, then they should also have the key, "comment_id", which is the id of the specific YouTube comment. This allows the created json file of deleted comments to be parsed by the YouTube api and delete the spam comments automatically. See example format of a json dataset file below:</p>
+            <div id="json-data"></div>
+        </section>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <script>
+        const jsonDataDiv = document.querySelector("#json-data");
+        const jsonData = [
+            {
+            "comment_id": "z12tsbvjay3avf04r04cdzegdkftg5cq5xg0k",
+            "comment": "This is a YouTube comment. May or may not be spam."
+            },
+            {
+                "comment_id": "z13zejcafsrodf5f522xgn0xzonselufv",
+                "comment": "This is another YouTube comment. Predict me please."
+            }
+        ];
+
+        jsonDataDiv.textContent = `${JSON.stringify(jsonData)}`;
+    </script>
 </body>
 </html>

@@ -58,7 +58,8 @@ def prediction():
             comments = predicted_comments.get_comments()
             for i in range(len(comments)):
                 if comments[i]["predicted_classification"] == 1:
-                    del comments[i]["clean_comment"]
+                    if comments[i]["clean_comment"]:
+                        del comments[i]["clean_comment"]
                     comments_to_delete.append(comments[i])
 
             filename = "comments_to_delete.json"
