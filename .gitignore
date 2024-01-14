@@ -169,4 +169,4 @@ datasets/raw/Youtube04-Eminem.csv
 datasets/raw/Youtube05-Shakira.csv
 static/
 mnb_model.pickle
-dist.zip
+spam-detection-dist.zip
