@@ -50,7 +50,7 @@ def initialize_project():
             ")\n"
         ])
 
-    shutil.make_archive('dist', 'zip', 'dist/')
+    shutil.make_archive('spam-detection-dist', 'zip', 'dist/')
 
 if __name__ == "__main__":
     initialize_project()
